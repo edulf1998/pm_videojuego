@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
    */
   protected void navegarMenu(View v) {
     Intent cambioActividad = null;
-    switch (((Button) v).getId()) {
+    switch (v.getId()) {
       case R.id.botonJugar:
         cambioActividad = new Intent(this, Juego.class);
         break;
