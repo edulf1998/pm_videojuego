@@ -2,6 +2,7 @@ package com.eduardo2dam.pm_videojuego;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -10,12 +11,18 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.eduardo2dam.pm_videojuego.actividades.Ajustes;
 import com.eduardo2dam.pm_videojuego.actividades.Juego;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements Button.OnClickListener {
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
+
+    Button b1 = (Button) findViewById(R.id.botonJugar);
+    Button b2 = (Button) findViewById(R.id.botonAjustes);
+
+    b1.setOnClickListener(this);
+    b2.setOnClickListener(this);
   }
 
   /**
@@ -24,7 +31,10 @@ public class MainActivity extends AppCompatActivity {
    *
    * @param v el botón pulsado
    */
-  protected void navegarMenu(View v) {
+  @Override
+  public void onClick(View v) {
+    Log.i("HOLA", "Cambio actividad");
+
     Intent cambioActividad = null;
     switch (v.getId()) {
       case R.id.botonJugar:
