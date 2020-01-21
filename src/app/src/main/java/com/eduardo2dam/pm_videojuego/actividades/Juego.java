@@ -15,11 +15,20 @@ public class Juego extends AppCompatActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
-    // Pantalla Completa
+    // Pantalla Completa y Esconder Action Bar
     getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
         WindowManager.LayoutParams.FLAG_FULLSCREEN);
     this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
+    getSupportActionBar().hide();
+
+
     setContentView(new GameView(getApplicationContext()));
+  }
+
+  @Override
+  public void onBackPressed() {
+    // super.onBackPressed();
+    // Not calling **super**, disables back button in current screen.
   }
 }
