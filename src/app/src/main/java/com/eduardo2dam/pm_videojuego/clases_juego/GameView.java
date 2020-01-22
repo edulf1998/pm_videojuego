@@ -6,6 +6,7 @@ import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.view.SurfaceView;
 import android.view.SurfaceHolder;
@@ -19,6 +20,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
   private AssetManager aM;
   private Typeface fuentePixel;
 
+  private int colorFondo = Color.rgb(89, 89, 89);
+  private int colorTexto = Color.rgb(255, 255, 255);
+
   public GameView(Context context) {
     super(context);
     getHolder().addCallback(this);
@@ -30,10 +34,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
   @Override
   public void surfaceCreated(SurfaceHolder holder) {
 
-
     //Logica de inicializacion
     aM = getContext().getApplicationContext().getAssets();
-    fuentePixel = Typeface.createFromAsset(aM, "fonts/pixeloperator.ttf");
+    // fuentePixel = Typeface.createFromAsset(aM, "font/pixeloperator.ttf");
 
     thread.setRunning(true);
     thread.start();
@@ -69,18 +72,28 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
       // Paints para distintos elementos
       Paint pinturaTexto = new Paint();
       pinturaTexto.setStyle(Paint.Style.FILL_AND_STROKE);
-      pinturaTexto.setTextSize(16);
-      pinturaTexto.setColor(Color.rgb(37, 41, 38));
+      pinturaTexto.setTextSize(64);
+      pinturaTexto.setColor(colorTexto);
       // pinturaTexto.setTypeface(fuentePixel);
 
       // Dibujar fondo
+      Paint pinturaFondo = new Paint();
+      pinturaFondo.setColor(colorFondo);
+      pinturaFondo.setStyle(Paint.Style.FILL_AND_STROKE);
 
+      canvas.drawRect(new Rect(0, 0, screenWidth, screenHeight), pinturaFondo);
 
-
+      // Dibujar rayas carretera
+      int numRayas = 5;
+      int offset = 0;
+      for(int i = 0; i < numRayas; i++) {
+        canvas.drawRect(new Rect((screenWidth / 2) + offset, 0, screenWidth / 5, screenHeight / 5), pinturaTexto);
+        offset += (screenHeight / 5);
+      }
 
       // Mostrar FPS del juego en la esquina superior derecha
       String fpsActuales = "FPS: " + thread.getAverageFPS();
-      canvas.drawText(fpsActuales, screenWidth - pinturaTexto.measureText(fpsActuales) - 24, 24, pinturaTexto);
+      canvas.drawText(fpsActuales, screenWidth - pinturaTexto.measureText(fpsActuales) - 24, 64, pinturaTexto);
     }
   }
 }
