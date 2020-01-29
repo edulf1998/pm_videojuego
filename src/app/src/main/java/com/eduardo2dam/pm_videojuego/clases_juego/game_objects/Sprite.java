@@ -5,8 +5,8 @@ import android.graphics.Canvas;
 
 public class Sprite {
   private Bitmap image;
-  public int x;
-  public int y;
+  public float x;
+  public float y;
 
   public Sprite() {
   }
@@ -17,7 +17,7 @@ public class Sprite {
     y = 0;
   }
 
-  public Sprite(Bitmap bmp, int x, int y) {
+  public Sprite(Bitmap bmp, float x, float y) {
     image = bmp;
     this.x = x;
     this.y = y;

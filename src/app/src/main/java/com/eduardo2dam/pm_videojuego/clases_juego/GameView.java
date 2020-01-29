@@ -3,15 +3,35 @@ package com.eduardo2dam.pm_videojuego.clases_juego;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
-import android.view.SurfaceView;
+import android.util.Log;
 import android.view.SurfaceHolder;
+import android.view.SurfaceView;
+
+import com.eduardo2dam.pm_videojuego.R;
+import com.eduardo2dam.pm_videojuego.clases_juego.game_objects.Sprite;
+
+import java.util.ArrayList;
 
 public class GameView extends SurfaceView implements SurfaceHolder.Callback {
+  ArrayList<Bitmap> coches;
+  ArrayList<Sprite> cochesSprite;
+
+  int[] bmpCoches = new int[]
+      {
+          R.drawable.coche_amarillo,
+          R.drawable.coche_azul,
+          R.drawable.coche_morado,
+          R.drawable.coche_rojo,
+          R.drawable.coche_verde
+      };
 
   MainThread thread;
   private int screenWidth = Resources.getSystem().getDisplayMetrics().widthPixels;
@@ -26,9 +46,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
   public GameView(Context context) {
     super(context);
     getHolder().addCallback(this);
-
     thread = new MainThread(getHolder(), this);
     setFocusable(true);
+
+    coches = new ArrayList<>();
+    cochesSprite = new ArrayList<>();
   }
 
   @Override
@@ -36,7 +58,18 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     //Logica de inicializacion
     aM = getContext().getApplicationContext().getAssets();
-    // fuentePixel = Typeface.createFromAsset(aM, "font/pixeloperator.ttf");
+    fuentePixel = getResources().getFont(R.font.pixeloperator);
+
+    // Añadir coches a la lista y crear los sprite adecuado
+    Matrix m = new Matrix();
+    m.postRotate(90);
+
+    Bitmap bmp;
+    for (int res : bmpCoches) {
+      bmp = BitmapFactory.decodeResource(getResources(), res);
+      coches.add(Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), m, false));
+      cochesSprite.add(new Sprite(bmp, 500, 500));
+    }
 
     thread.setRunning(true);
     thread.start();
@@ -61,6 +94,10 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
   }
 
   public void update() {
+    // Mover coches
+    for (Sprite s : cochesSprite) {
+      s.x += 0.5;
+    }
   }
 
   @Override
@@ -74,7 +111,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
       pinturaTexto.setStyle(Paint.Style.FILL_AND_STROKE);
       pinturaTexto.setTextSize(64);
       pinturaTexto.setColor(colorTexto);
-      // pinturaTexto.setTypeface(fuentePixel);
+      pinturaTexto.setTypeface(fuentePixel);
 
       // Dibujar fondo
       Paint pinturaFondo = new Paint();
@@ -84,16 +121,21 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
       canvas.drawRect(new Rect(0, 0, screenWidth, screenHeight), pinturaFondo);
 
       // Dibujar rayas carretera
-      int numRayas = 5;
-      int offset = 0;
-      for(int i = 0; i < numRayas; i++) {
-        canvas.drawRect(new Rect((screenWidth / 2) + offset, 0, screenWidth / 5, screenHeight / 5), pinturaTexto);
-        offset += (screenHeight / 5);
+      int numRayas = 10;
+      int offset = (screenWidth / 5);
+      for (int i = 0; i < numRayas; i++) {
+        canvas.drawRect(new Rect(0, offset, screenWidth, 10 + offset), pinturaTexto);
+        offset += (screenWidth / 5);
+      }
+
+      // Dibujar coches
+      for (Sprite s : cochesSprite) {
+        s.draw(canvas);
       }
 
       // Mostrar FPS del juego en la esquina superior derecha
       String fpsActuales = "FPS: " + thread.getAverageFPS();
-      canvas.drawText(fpsActuales, screenWidth - pinturaTexto.measureText(fpsActuales) - 24, 64, pinturaTexto);
+      canvas.drawText(fpsActuales, screenWidth - pinturaTexto.measureText(fpsActuales) - (screenWidth / 20), (screenHeight / 20), pinturaTexto);
     }
   }
 }
