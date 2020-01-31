@@ -11,16 +11,18 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
-import android.util.Log;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
 
 import com.eduardo2dam.pm_videojuego.R;
 import com.eduardo2dam.pm_videojuego.clases_juego.game_objects.Sprite;
+import com.eduardo2dam.pm_videojuego.clases_juego.services.MusicPlayer;
 
 import java.util.ArrayList;
 
-public class GameView extends SurfaceView implements SurfaceHolder.Callback {
+public class GameView extends SurfaceView implements SurfaceHolder.Callback, SurfaceView.OnTouchListener {
   ArrayList<Bitmap> coches;
   ArrayList<Sprite> cochesSprite;
 
@@ -55,7 +57,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
   @Override
   public void surfaceCreated(SurfaceHolder holder) {
-
     //Logica de inicializacion
     aM = getContext().getApplicationContext().getAssets();
     fuentePixel = getResources().getFont(R.font.pixeloperator);
@@ -73,6 +74,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     thread.setRunning(true);
     thread.start();
+
+    setOnTouchListener(this);
+
+    // Musica Fondo
+    MusicPlayer.getInstance(getContext()).startBgMusic(getContext());
   }
 
   @Override
@@ -137,5 +143,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
       String fpsActuales = "FPS: " + thread.getAverageFPS();
       canvas.drawText(fpsActuales, screenWidth - pinturaTexto.measureText(fpsActuales) - (screenWidth / 20), (screenHeight / 20), pinturaTexto);
     }
+  }
+
+  @Override
+  public boolean onTouch(View v, MotionEvent event) {
+    MusicPlayer.getInstance(getContext()).playCoinSfx();
+    return false;
   }
 }
