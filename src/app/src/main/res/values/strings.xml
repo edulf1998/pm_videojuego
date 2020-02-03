@@ -3,4 +3,9 @@
   <string name="titulo_juego">SIN TÍTULO</string>
   <string name="ajustes">AJUSTES</string>
   <string name="jugar">JUGAR</string>
+    <string name="ajus_sonido">Ajustes de Sonido</string>
+  <string name="bgm">BGM (Música)</string>
+  <string name="sfx_efectos">SFX (Efectos)</string>
+  <string name="ajustes_de_juego">Ajustes de Juego</string>
+  <string name="n_de_vidas">Nº de Vidas</string>
 </resources>
