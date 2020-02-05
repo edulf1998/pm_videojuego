@@ -1,6 +1,9 @@
 package com.eduardo2dam.pm_videojuego.clases_juego;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.graphics.Canvas;
@@ -8,19 +11,30 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.widget.Toast;
 
+import com.eduardo2dam.pm_videojuego.MainActivity;
 import com.eduardo2dam.pm_videojuego.R;
+import com.eduardo2dam.pm_videojuego.actividades.Gana;
 import com.eduardo2dam.pm_videojuego.clases_juego.game_objects.Container;
 import com.eduardo2dam.pm_videojuego.clases_juego.game_objects.Sprite;
 import com.eduardo2dam.pm_videojuego.clases_juego.game_objects.SpriteManager;
+import com.eduardo2dam.pm_videojuego.clases_juego.services.MusicPlayer;
+
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
 public class GameView extends SurfaceView implements SurfaceHolder.Callback {
-  Container cars;
-  SpriteManager carsSprite;
-  Container logs;
-  SpriteManager logsSprite;
+  private Container cars;
+  private SpriteManager carsSprite;
+  private Container logs;
+  private SpriteManager logsSprite;
+
+  private SharedPreferences sp;
+  private int numVidas;
+  private int numVidasActual;
 
   int[] bmpCars = new int[]
       {
@@ -49,7 +63,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
   private int colorFondo = Color.rgb(89, 89, 89);
   private int colorTexto = Color.rgb(255, 255, 255);
 
-  public GameView(Context context) {
+  public GameView(Context context, SharedPreferences sp) {
     super(context);
     getHolder().addCallback(this);
     thread = new MainThread(getHolder(), this);
@@ -59,6 +73,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     logs = new Container();
     carsSprite = new SpriteManager();
     logsSprite = new SpriteManager();
+
+    this.sp = sp;
   }
 
   @Override
@@ -70,7 +86,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     carsGenerator();
     logsGenerator();
-
 
     thread.setRunning(true);
     thread.start();
@@ -188,5 +203,35 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
       String fpsActuales = "FPS: " + thread.getAverageFPS();
       canvas.drawText(fpsActuales, screenWidth - pinturaTexto.measureText(fpsActuales) - (float) screenWidth / 20, (float) (screenHeight / 20), pinturaTexto);
     }
+  }
+
+  private void collision() {
+    // Quitar una vida al jugador.
+    this.numVidasActual--;
+    if (this.numVidasActual <= 0) {
+      // Jugador pierde...
+      redirectTo(Gana.class);
+
+    } else {
+      // Devolver jugador a posicion inicial
+
+      // Si el jugador ya está en la pantalla, asignar su X e Y.
+      // Si no está en la pantalla, hacerle aparecer en X e Y.
+    }
+  }
+
+  private void redirectTo(Class c) {
+    Intent i = new Intent(getContext(), c);
+    i.addFlags(FLAG_ACTIVITY_NEW_TASK); // Si no se especifica, crashea porque salta una excepción!
+
+    getContext().startActivity(i);
+  }
+
+  @Override
+  public boolean onTouchEvent(MotionEvent event) {
+    Toast.makeText(getContext(), "Click!", Toast.LENGTH_LONG).show();
+    MusicPlayer.getInstance(getContext(), sp).playCoinSfx();
+
+    return false;
   }
 }

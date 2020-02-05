@@ -1,6 +1,7 @@
 package com.eduardo2dam.pm_videojuego.clases_juego.services;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.media.AudioAttributes;
 import android.media.MediaPlayer;
 import android.media.SoundPool;
@@ -11,6 +12,9 @@ import com.eduardo2dam.pm_videojuego.R;
 public class MusicPlayer {
   private static MusicPlayer _instance;
 
+  private float bgmVolumen = 1;
+  private float sfxVolumen = 1;
+
   private SoundPool sfx;
   private int idCoin;
 
@@ -18,14 +22,17 @@ public class MusicPlayer {
 
   private boolean play = false;
 
-  private MusicPlayer(Context context) {
+  private MusicPlayer(Context context, SharedPreferences sp) {
     AudioAttributes attributes = new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_GAME).setContentType(AudioAttributes.CONTENT_TYPE_MUSIC).build();
     sfx = new SoundPool.Builder().setMaxStreams(5).setAudioAttributes(attributes).build();
+
+    bgmVolumen = (float) (sp.getInt("bgmVolumen", 100)) / 100;
+    sfxVolumen = (float) (sp.getInt("sfxVolumen", 100)) / 100;
   }
 
-  public static MusicPlayer getInstance(Context context) {
+  public static MusicPlayer getInstance(Context context, SharedPreferences sp) {
     if (_instance == null) {
-      _instance = new MusicPlayer(context);
+      _instance = new MusicPlayer(context, sp);
       _instance.cargar(context);
     }
     return _instance;
@@ -37,18 +44,19 @@ public class MusicPlayer {
 
   public void playCoinSfx() {
     if (sfx != null) {
-      sfx.play(idCoin, 1, 1, 0, 0, 1);
+      sfx.play(idCoin, sfxVolumen, sfxVolumen, 0, 0, 1);
     }
   }
 
   public void startBgMusic(Context c) {
     bgm = MediaPlayer.create(c, R.raw.sm_coin);
+    bgm.setVolume(bgmVolumen, bgmVolumen);
     bgm.setLooping(true);
     bgm.start();
   }
 
   public void stopBgMusic() {
-    if(bgm != null && bgm.isPlaying()) {
+    if (bgm != null && bgm.isPlaying()) {
       bgm.stop();
     }
   }

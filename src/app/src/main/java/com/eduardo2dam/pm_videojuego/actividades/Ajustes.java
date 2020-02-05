@@ -6,17 +6,15 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.RatingBar;
 import android.widget.SeekBar;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.eduardo2dam.pm_videojuego.R;
 
 public class Ajustes extends AppCompatActivity implements Button.OnClickListener {
   private Button btnGuardar;
-
   private SeekBar bgmVolumen;
   private SeekBar sfxVolumen;
-
   private RatingBar numVidas;
 
   @Override
@@ -64,6 +62,8 @@ public class Ajustes extends AppCompatActivity implements Button.OnClickListener
       e.putFloat("numVidas", _numVidas);
 
       e.apply();
+
+      Toast.makeText(this, "¡Ajustes guardados!", Toast.LENGTH_LONG).show();
     }
   }
 }

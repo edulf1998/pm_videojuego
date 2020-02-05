@@ -21,9 +21,7 @@ public class Juego extends AppCompatActivity {
     this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
     getSupportActionBar().hide();
-
-
-    setContentView(new GameView(getApplicationContext()));
+    setContentView(new GameView(getApplicationContext(), getSharedPreferences("ajustes_froggdroid", MODE_PRIVATE)));
   }
 
   @Override
