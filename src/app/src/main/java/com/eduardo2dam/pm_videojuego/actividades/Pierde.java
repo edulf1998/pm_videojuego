@@ -20,4 +20,10 @@ public class Pierde extends AppCompatActivity {
     Intent i = new Intent(getApplicationContext(), Puntuaciones.class);
     startActivity(i);
   }
+
+  @Override
+  public void onBackPressed() {
+    // super.onBackPressed();
+    // Not calling **super**, disables back button in current screen.
+  }
 }

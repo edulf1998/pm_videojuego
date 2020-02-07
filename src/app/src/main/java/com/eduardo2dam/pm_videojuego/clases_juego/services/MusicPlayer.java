@@ -48,7 +48,7 @@ public class MusicPlayer {
   }
 
   public void startBgMusic(Context c) {
-    bgm = MediaPlayer.create(c, R.raw.sm_coin);
+    bgm = MediaPlayer.create(c, R.raw.frogger_retro);
     bgm.setVolume(bgmVolumen, bgmVolumen);
     bgm.setLooping(true);
     bgm.start();

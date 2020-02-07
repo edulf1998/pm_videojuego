@@ -18,7 +18,7 @@ public class SQLiteService {
     dbHelper = new DbHelper(c);
   }
 
-  public SQLiteService getInstance(Context c) {
+  public static SQLiteService getInstance(Context c) {
     if (_instance == null) {
       _instance = new SQLiteService(c);
     }
@@ -29,7 +29,7 @@ public class SQLiteService {
     List<Object[]> puntuaciones = new ArrayList<>();
 
     SQLiteDatabase db = dbHelper.getReadableDatabase();
-    Cursor dbC = db.query("Puntuaciones", new String[]{"nombre", "puntuacion"}, null, null, null, null, null, null);
+    Cursor dbC = db.query("Puntuaciones", new String[]{"nombre", "puntuacion"}, null, null, null, null, "puntuacion DESC", null);
 
     // Leer todas las puntuaciones del cursor
     if (dbC != null && dbC.moveToFirst()) {

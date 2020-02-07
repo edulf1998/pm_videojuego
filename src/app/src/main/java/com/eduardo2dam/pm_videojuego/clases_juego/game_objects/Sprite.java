@@ -70,15 +70,15 @@ public class Sprite {
       }
     } else {
       if (i >= -3) {
-        this.velocity = -7;
-      } else if (i >= -5) {
         this.velocity = -9;
-      } else if (i >= -7) {
+      } else if (i >= -5) {
         this.velocity = -6;
+      } else if (i >= -7) {
+        this.velocity = -5;
       } else if (i >= -9) {
         this.velocity = -4;
       } else {
-        this.velocity = -5;
+        this.velocity = -4;
       }
     }
   }

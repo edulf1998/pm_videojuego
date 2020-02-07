@@ -12,6 +12,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -27,6 +28,7 @@ import com.eduardo2dam.pm_videojuego.clases_juego.game_objects.SpriteManager;
 import com.eduardo2dam.pm_videojuego.clases_juego.services.MusicPlayer;
 
 import java.text.DecimalFormat;
+import java.util.Random;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
@@ -66,13 +68,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
       R.drawable.coche_verde
   };
 
-
   int[] bmpLogs = new int[]
       {
           R.drawable.large_log,
-          R.drawable.short_log,
+          R.drawable.big_log,
           R.drawable.medium_log,
-          R.drawable.big_log
+          R.drawable.short_log,
       };
 
   int[] bmpControls = new int[]
@@ -153,6 +154,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     createFrogs();
     createWater();
 
+    this.numVidas = numVidas;
+    this.numVidasActual = numVidas;
+
     stablishLives();
 
     animForwardFrog = new Animation(frogForward.getBitmaps(), 1f);
@@ -165,13 +169,14 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     animWater = new Animation(water.getBitmaps(), 2f);
 
-    this.numVidas = numVidas;
-    this.numVidasActual = numVidas;
 
-    df = new DecimalFormat("00000");
+    df = new DecimalFormat("000000");
 
     this.bgmVolumen = bgmVolumen;
     this.sfxVolumen = sfxVolumen;
+
+    // Reproducir música de fondo
+    MusicPlayer.getInstance(context, bgmVolumen, sfxVolumen).startBgMusic(context);
   }
 
   @Override
@@ -184,16 +189,15 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     logsGenerator();
     createControls();
 
-
     thread.setRunning(true);
     thread.start();
   }
 
   public void stablishLives() {
     hearth = BitmapFactory.decodeResource(getResources(), R.drawable.hearth);
-    int offset = screenHeight / 12;
-    for (int i = 0; i <= numVidas; i++) {
-      hearthSprites.addSprite(new Sprite(hearth, offset, 0));
+    int offset = 0;
+    for (int i = 0; i < numVidas; i++) {
+      hearthSprites.addSprite(new Sprite(hearth, offset, screenHeight / 12));
       offset += hearth.getWidth();
     }
   }
@@ -264,6 +268,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
       }
       retry = false;
     }
+
+    MusicPlayer.getInstance(getContext(), bgmVolumen, sfxVolumen).stopBgMusic();
   }
 
   public void update() {
@@ -277,12 +283,14 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     // Mover troncos
+    int i = 2;
     for (Sprite log : logsSprite.getSprites()) {
       if (log.getX() <= -log.getImage().getWidth()) {
         log.setX(screenWidth + log.getImage().getWidth());
-        log.setVelocity((int) -(Math.random() * 10 + 1));
+        log.setVelocity((int) -(i));
       }
       log.update();
+      i += 2;
     }
 
     // Actualizar rana
@@ -300,14 +308,16 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
       collision();
     }
 
-
     // Animar agua
     animWater.play();
 
     // Comprobar si la rana está arriba
-    if(FrogPosition.y <= screenHeight / 12) {
+    if (FrogPosition.y <= screenHeight / 12) {
       redirectTo(Gana.class);
     }
+
+    //Sumar puntuacion
+    cambiarPuntuacion(new Random().nextInt(50 - 25) + 25);
   }
 
   @Override
@@ -346,8 +356,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
       // Dibujar coches
       for (Sprite s : carsSprite.getSprites()) {
         s.draw(canvas);
-        if (FrogPosition.x > s.getX() && FrogPosition.x < s.getX() + s.getImage().getWidth()
-            && FrogPosition.y > s.getY() && FrogPosition.y < s.getY() + s.getImage().getHeight()) {
+        if (FrogPosition.x + frogForward.getBitmaps().get(0).getWidth() / 2 > s.getX() && FrogPosition.x + frogForward.getBitmaps().get(0).getWidth() / 2 < s.getX() + s.getImage().getWidth()
+            && FrogPosition.y + frogForward.getBitmaps().get(0).getHeight() / 2 > s.getY() && FrogPosition.y + frogForward.getBitmaps().get(0).getHeight() / 2 < s.getY() + s.getImage().getHeight()) {
           collision = true;
           bloodSprite = new Sprite(blood, FrogPosition.x, FrogPosition.y);
           bloodSprites.addSprite(bloodSprite);
@@ -355,17 +365,20 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
       }
 
       // Dibujar troncos
+      boolean collisionFinalValue = true;
       for (Sprite s : logsSprite.getSprites()) {
         s.draw(canvas);
         if (FrogPosition.y <= logsSprite.getSprites().get(0).getY() + logsSprite.getSprites().get(0).getImage().getHeight()) {
-          if (FrogPosition.x < s.getX() && FrogPosition.x < s.getX() + s.getImage().getWidth()
-              && FrogPosition.y > s.getY() && FrogPosition.y < s.getY() + s.getImage().getHeight()) {
+          Log.i("VARIABLES", "Posición mitad de la rana en x" + frogForward.getBitmaps().get(0).getWidth() / 2 + "\nPosición mitad de la rana en y" + frogForward.getBitmaps().get(0).getHeight() / 2
+              + "\nPosición xInicial tronco" + s.getX() + "\nPosición yInicial tronco" + s.getY() + "\nPosición xFinal tronco" + s.getX() + s.getImage().getWidth() + "\nPosición yFinal tronco" + s.getY() + s.getImage().getHeight());
+          if (!(FrogPosition.x + frogForward.getBitmaps().get(0).getWidth() / 2 > s.getX() && FrogPosition.x + frogForward.getBitmaps().get(0).getWidth() / 2 < s.getX() + s.getImage().getWidth()
+              && FrogPosition.y + frogForward.getBitmaps().get(0).getHeight() / 2 > s.getY() && FrogPosition.y + frogForward.getBitmaps().get(0).getHeight() / 2 < s.getY() + s.getImage().getHeight())) {
             collision = true;
-            bloodSprite = new Sprite(blood, FrogPosition.x, FrogPosition.y);
-            bloodSprites.addSprite(bloodSprite);
+          } else {
+            collisionFinalValue = false;
           }
+          collision = collisionFinalValue;
         }
-
       }
 
       for (Sprite s : bloodSprites.getSprites()) {
@@ -403,6 +416,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
   }
 
   private void collision() {
+    // Restarle puntuacion
+    cambiarPuntuacion(0 - new Random().nextInt(50 - 25) + 25);
+
     // Quitar una vida al jugador.
     this.numVidasActual--;
     if (this.numVidasActual <= 0) {
@@ -414,22 +430,23 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
       FrogPosition.x = screenWidth / 2 - frogForward.getBitmaps().get(0).getWidth() / 2;
       FrogPosition.y = screenHeight - (screenHeight / 12 - frogForward.getBitmaps().get(0).getHeight() / 2);
       FrogPosition.state = 0;
-      hearthSprites.getSprites().remove(0);
+      hearthSprites.getSprites().remove(hearthSprites.getSprites().size() - 1);
     }
   }
 
   private void redirectTo(Class c) {
     Intent i = new Intent(getContext(), c);
     i.addFlags(FLAG_ACTIVITY_NEW_TASK); // Si no se especifica, crashea porque salta una excepción!
+    TempStorage.puntuacion = puntuacion;
 
     getContext().startActivity(i);
     thread.setRunning(false);
+
+    MusicPlayer.getInstance(getContext(), bgmVolumen, sfxVolumen).stopBgMusic();
   }
 
   @Override
   public boolean onTouchEvent(MotionEvent event) {
-    MusicPlayer.getInstance(getContext(), bgmVolumen, sfxVolumen).playCoinSfx();
-
     if (event.getAction() == android.view.MotionEvent.ACTION_UP) {
       if (event.getX() >= controlsSprite.getSprites().get(0).getX() &&
           event.getX() <= controlsSprite.getSprites().get(0).getX() + controlsSprite.getSprites().get(0).getImage().getWidth()
@@ -476,6 +493,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     this.puntuacion += puntos;
     if (puntuacion < 0) {
       puntuacion = 0;
+    }
+    if (puntuacion > 999999) {
+      puntuacion = 999999;
     }
   }
 }
