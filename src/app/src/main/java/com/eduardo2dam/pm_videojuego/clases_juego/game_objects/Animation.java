@@ -2,67 +2,75 @@ package com.eduardo2dam.pm_videojuego.clases_juego.game_objects;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.Rect;
+
+import java.util.ArrayList;
 
 public class Animation {
-  private Bitmap[] frames;
-  private int frameIndex;
+    private ArrayList<Bitmap> frames;
+    private int frameIndex;
 
-  private boolean isPlaying = false;
+    private float frameTime;
+    private long lastFrame;
+    int x = 0;
+    int y = 0;
 
-  public boolean isPlaying() {
-    return isPlaying;
-  }
 
-  public void play() {
-    isPlaying = true;
-    frameIndex = 0;
-    lastFrame = System.currentTimeMillis();
-  }
+    public Animation(ArrayList<Bitmap> frames, float animTime) {
+        this.frames = frames;
+        frameIndex = 0;
 
-  public void stop() {
-    isPlaying = false;
-  }
+        frameTime = animTime / frames.size();
 
-  private float frameTime;
-
-  private long lastFrame;
-
-  public Animation(Bitmap[] frames, float animTime) {
-    this.frames = frames;
-    frameIndex = 0;
-
-    frameTime = animTime / frames.length;
-
-    lastFrame = System.currentTimeMillis();
-  }
-
-  public void draw(Canvas canvas, Rect destination) {
-    if (!isPlaying)
-      return;
-
-    scaleRect(destination);
-
-    canvas.drawBitmap(frames[frameIndex], null, destination, new Paint());
-  }
-
-  private void scaleRect(Rect rect) {
-    float whRatio = (float) (frames[frameIndex].getWidth()) / frames[frameIndex].getHeight();
-    if (rect.width() > rect.height())
-      rect.left = rect.right - (int) (rect.height() * whRatio);
-    else
-      rect.top = rect.bottom - (int) (rect.width() * (1 / whRatio));
-  }
-
-  public void update() {
-    if (!isPlaying)
-      return;
-
-    if (System.currentTimeMillis() - lastFrame > frameTime * 1000) {
-      frameIndex++;
-      frameIndex = frameIndex >= frames.length ? 0 : frameIndex;
-      lastFrame = System.currentTimeMillis();
+        lastFrame = System.currentTimeMillis();
     }
-  }
+
+    public int getFrameIndex() {
+        return frameIndex;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
+
+    public void play() {
+        if (frameIndex >= frames.size()) {
+            stop();
+        } else {
+            if (System.currentTimeMillis() - lastFrame > frameTime * 1000) {
+                frameIndex++;
+                lastFrame = System.currentTimeMillis();
+            }
+        }
+    }
+
+    public void playOnce() {
+        if (frameIndex < frames.size()) {
+            if (System.currentTimeMillis() - lastFrame > frameTime * 1000) {
+                frameIndex++;
+                lastFrame = System.currentTimeMillis();
+            }
+        }
+
+    }
+
+    public void stop() {
+        frameIndex = 0;
+    }
+
+    public void draw(Canvas canvas, int x, int y) {
+        canvas.drawBitmap(frames.get(frameIndex), x, y, null);
+    }
+
 }

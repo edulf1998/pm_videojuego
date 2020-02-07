@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.media.AudioAttributes;
 import android.media.MediaPlayer;
 import android.media.SoundPool;
-import android.util.Log;
 
 import com.eduardo2dam.pm_videojuego.R;
 
@@ -22,17 +21,17 @@ public class MusicPlayer {
 
   private boolean play = false;
 
-  private MusicPlayer(Context context, SharedPreferences sp) {
+  private MusicPlayer(Context context, float bgmVolumen, float sfxVolumen) {
     AudioAttributes attributes = new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_GAME).setContentType(AudioAttributes.CONTENT_TYPE_MUSIC).build();
     sfx = new SoundPool.Builder().setMaxStreams(5).setAudioAttributes(attributes).build();
 
-    bgmVolumen = (float) (sp.getInt("bgmVolumen", 100)) / 100;
-    sfxVolumen = (float) (sp.getInt("sfxVolumen", 100)) / 100;
+    this.bgmVolumen = bgmVolumen;
+    this.sfxVolumen = sfxVolumen;
   }
 
-  public static MusicPlayer getInstance(Context context, SharedPreferences sp) {
+  public static MusicPlayer getInstance(Context context, float bgmVolumen, float sfxVolumen) {
     if (_instance == null) {
-      _instance = new MusicPlayer(context, sp);
+      _instance = new MusicPlayer(context, bgmVolumen, sfxVolumen);
       _instance.cargar(context);
     }
     return _instance;

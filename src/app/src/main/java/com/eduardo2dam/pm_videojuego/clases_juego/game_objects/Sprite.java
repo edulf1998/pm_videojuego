@@ -5,9 +5,13 @@ import android.graphics.Canvas;
 
 public class Sprite {
   private Bitmap image;
-  public float x;
-  public float y;
-  public double velocity;
+  private float x;
+  private float y;
+  private double velocity;
+
+  public Sprite(Bitmap bmp) {
+    image = bmp;
+  }
 
   public Sprite(Bitmap bmp, float x, float y) {
     image = bmp;
@@ -25,6 +29,22 @@ public class Sprite {
 
   public Bitmap getImage() {
     return image;
+  }
+
+  public float getX() {
+    return x;
+  }
+
+  public void setX(float x) {
+    this.x = x;
+  }
+
+  public float getY() {
+    return y;
+  }
+
+  public void setY(float y) {
+    this.y = y;
   }
 
   public double getVelocity() {

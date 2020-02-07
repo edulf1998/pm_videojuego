@@ -16,17 +16,19 @@
             android:id="@+id/textView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/pixeloperator"
             android:text="@string/ajus_sonido"
             android:textColor="@android:color/black"
-            android:textSize="24sp" />
+            android:textSize="26sp" />
 
         <TextView
             android:id="@+id/textView2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10sp"
+            android:fontFamily="@font/pixeloperator"
             android:text="@string/bgm"
-            android:textSize="18sp" />
+            android:textSize="20sp" />
 
         <SeekBar
             android:id="@+id/bgmVolumen"
@@ -41,8 +43,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10sp"
+            android:fontFamily="@font/pixeloperator"
             android:text="@string/sfx_efectos"
-            android:textSize="18sp" />
+            android:textSize="20sp" />
 
         <SeekBar
             android:id="@+id/sfxVolumen"
@@ -63,17 +66,19 @@
             android:id="@+id/textView5"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/pixeloperator"
             android:text="@string/ajustes_de_juego"
             android:textColor="@android:color/black"
-            android:textSize="24sp" />
+            android:textSize="26sp" />
 
         <TextView
             android:id="@+id/textView6"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10sp"
+            android:fontFamily="@font/pixeloperator"
             android:text="@string/n_de_vidas"
-            android:textSize="18sp" />
+            android:textSize="20sp" />
 
         <RatingBar
             android:id="@+id/numVidas"
@@ -97,7 +102,9 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10sp"
             android:layout_marginRight="10sp"
-            android:text="Guardar Cambios" />
+            android:fontFamily="@font/pixeloperator"
+            android:text="Guardar Cambios"
+            android:textSize="20sp" />
 
     </LinearLayout>
 
