@@ -28,6 +28,7 @@ import com.eduardo2dam.pm_videojuego.clases_juego.game_objects.SpriteManager;
 import com.eduardo2dam.pm_videojuego.clases_juego.services.MusicPlayer;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Random;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
@@ -204,6 +205,14 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
   public void createWater() {
     water.createBitmaps(bmpWater, getContext());
+    Bitmap provisional = water.getBitmaps().get(0);
+    Bitmap provisional2 = water.getBitmaps().get(0);
+    provisional = Bitmap.createScaledBitmap(water.getBitmaps().get(0), screenWidth, screenHeight / 12 * 5, false);
+    provisional2 = Bitmap.createScaledBitmap(water.getBitmaps().get(1), screenWidth, screenHeight / 12 * 5, false);
+    ArrayList<Bitmap> pro = new ArrayList<>();
+    pro.add(provisional);
+    pro.add(provisional2);
+    water.setBitmaps(pro);
   }
 
   public void createFrogs() {
@@ -351,7 +360,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
       }
 
       // Dibujar agua
-      animWater.draw(canvas, 0, 0 - (screenHeight / 100 * 84));
+      animWater.draw(canvas, 0, 0);
 
       // Dibujar coches
       for (Sprite s : carsSprite.getSprites()) {

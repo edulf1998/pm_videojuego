@@ -44,4 +44,8 @@ public class Container {
   public void update() {
 
   }
+
+  public void setBitmaps(ArrayList<Bitmap> bitmaps) {
+    this.bitmaps = bitmaps;
+  }
 }
